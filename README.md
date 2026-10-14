@@ -1,6 +1,12 @@
-# vExpert: Virtualized Expert Storage for Dynamic Load Balancing in MoE Inference
+# vExpert: Virtualizing Expert Storage for Adaptive Load Balancing in Distributed MoE Inference
 
-This repository contains the implementation of **vExpert**, a virtualized expert storage system that addresses dynamic load imbalance in distributed Mixture-of-Experts (MoE) model deployment. This codebase is built on top of [SGLang](https://github.com/sgl-project/sglang) and implements the vExpert system.
+This repository provides the official implementation of the paper **vExpert: Virtualizing Expert Storage for Adaptive Load Balancing in Distributed MoE Inference**, corresponding to NeurIPS 2026.
+
+- **Authors**: Wenxun Wang, Xiuhong Li, Yida Wang, Chen Tang, Zongle Huang, Ke Hong, Yu Wang, and Yongpan Liu.
+- **Venue**: NeurIPS 2026.
+- **Paper**: Public paper link forthcoming.
+
+**vExpert** is a virtualized expert storage system that addresses dynamic load imbalance in distributed Mixture-of-Experts (MoE) model deployment. This codebase is built on top of [SGLang](https://github.com/sgl-project/sglang) and implements the vExpert system.
 
 ## Overview
 
@@ -18,37 +24,37 @@ This repository contains the implementation of **vExpert**, a virtualized expert
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd sglang
+   git clone https://github.com/Flying-Cloud/vExpert.git
+   cd vExpert
    ```
+   Run the following steps from this repository root. Parentheses in the commands below run each installation in a subshell, so the working directory remains `vExpert/`.
 
 2. **Install SGLang base dependencies**
-   Follow the original [SGLang installation guide](https://docs.sglang.ai/get_started/install.html) to install base dependencies.
+   Prepare a Python 3.10 or newer environment with CUDA-enabled PyTorch and the CUDA toolkit. This repository is based on SGLang v0.5.1; refer to the bundled [package configuration](sglang/python/pyproject.toml) for dependencies and the [SGLang installation guide](https://docs.sglang.ai/get_started/install.html) for environment setup.
 
-3. **Install semi-pd-ipc module**
-   The `semi-pd-ipc` module provides the communication infrastructure  as well as the cuda kernels for virtual expert memory allocation:
+3. **Install the semi-pd-ipc module**
+   This module provides inter-process communication and CUDA kernels for virtual expert memory allocation:
    ```bash
-   cd semi-pd-ipc
-   python setup.py install
-   cd ..
+   (cd sglang/semi-pd-ipc && python setup.py install)
    ```
-4. **Install Customized DeepGEMM module**
-   Note that vExpert requires a customized DeepGEMM module to support virtual expert. The `deepgemm` module provides the customized deepgemm implementation for the vExpert system:
+
+4. **Install the customized DeepGEMM module**
+   Install the bundled implementation, which includes vExpert support:
    ```bash
-   cd deepgemm
-   python setup.py install
-   cd ..
+   (cd DeepGEMM && python setup.py install)
    ```
-5. **Install Customized DeepEP module**
-   We modify DeepEP to support IPC features required for vExpert (using nvshmem). The `deepep` module provides the customized deepep implementation for the vExpert system:
+
+5. **Install the customized DeepEP module**
+   Install NVSHMEM first and set `NVSHMEM_DIR` to its installation directory. The bundled DeepEP implementation includes the IPC features required by vExpert:
    ```bash
-   cd deepep
-   NVSHMEM_DIR=$NVSHMEM_PATH python setup.py install
-   cd ..
+   export NVSHMEM_DIR=/path/to/nvshmem/install
+   (cd DeepEP && python setup.py install)
    ```
-6. **Install SGLang Python package**
+
+6. **Install the SGLang Python package**
+   Install the bundled SGLang implementation in the same Python environment:
    ```bash
-   pip install -e python
+   python -m pip install -e ./sglang/python
    ```
 
 ## Usage
@@ -161,6 +167,32 @@ Refer to `sglang/example.sh` for a complete example of deploying vExpert in a Pr
 
 3. Requires sufficient host DRAM for expert redundancy pool
 
+## Citation
+
+If you use vExpert in your research, please cite the accompanying paper. The citation below includes the paper title and authors; it will be updated with the public paper link and final proceedings metadata when available:
+
+```bibtex
+@misc{wang2026vexpert,
+  title     = {vExpert: Virtualizing Expert Storage for Adaptive Load Balancing in Distributed {MoE} Inference},
+  author    = {Wang, Wenxun and Li, Xiuhong and Wang, Yida and Tang, Chen and Huang, Zongle and Hong, Ke and Wang, Yu and Liu, Yongpan},
+  year      = {2026}
+}
+```
+
+## License
+
+The vExpert-specific contributions are licensed under the **Apache License 2.0**; see [LICENSE](LICENSE).
+
+The repository also includes third-party components with their own license files:
+
+| Component | License | License file |
+|-----------|---------|--------------|
+| SGLang | Apache License 2.0 | [sglang/LICENSE](sglang/LICENSE) |
+| DeepEP | MIT License | [DeepEP/LICENSE](DeepEP/LICENSE) |
+| DeepGEMM | MIT License | [DeepGEMM/LICENSE](DeepGEMM/LICENSE) |
+
+Bundled dependencies retain the license and copyright notices provided in their respective directories.
+
 ## Acknowledgments
 
-This implementation is built on top of the [SGLang](https://github.com/sgl-project/sglang) framework. We thank the SGLang team for their excellent open-source contributions that made this work possible.
+vExpert builds on [SGLang](https://github.com/sgl-project/sglang) and includes customized versions of [DeepEP](https://github.com/deepseek-ai/DeepEP) and [DeepGEMM](https://github.com/deepseek-ai/DeepGEMM). We thank the maintainers and contributors of these projects.
